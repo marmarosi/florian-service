@@ -6,7 +6,7 @@ const html = require('./html.js');
 const msg = require('./messages.js');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const COMMAND = {
   CHARS: 'characters',
