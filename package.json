@@ -4,6 +4,7 @@
   "description": "Small coding task with GraphQL and Node.",
   "main": "starwars.js",
   "scripts": {
+    "start": "node starwars.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
