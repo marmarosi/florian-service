@@ -2,6 +2,8 @@
 
 const messages = {
 
+  startup: port => `Example app listening on port ${port}!`,
+
   chars: {
     arg: 'The movie title is missing.',
     header: title => `The characters of the movie "${title}":`,
@@ -37,9 +39,6 @@ Where valid conmmands are the following:
 
     help
         Displays this list.`,
-
-  startup: port => `Example app listening on port ${port}!`,
-  hello: 'Hello World!'
 };
 
 module.exports = messages;

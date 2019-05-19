@@ -1,7 +1,8 @@
 "use strict";
 
 const express = require('express');
-const api = require('./api.js');
+const cli = require('./cli.js');
+const html = require('./html.js');
 const msg = require('./messages.js');
 
 const app = express();
@@ -17,53 +18,50 @@ const finish = () => {
   server.close();
 };
 
-const display = message => {
-  console.log( message );
-  finish();
-};
+const args = process.argv.slice(2);
 
 const server = app.listen( port, () => {
 
-  if (process.argv.length < 3) {
+  if (args.length === 0) {
     console.log( msg.startup( port ) );
   }
 } );
 
-if (process.argv.length > 2) {
+if (args.length > 0) {
 
-  const cmd = process.argv[2];
+  const cmd = args[0];
   switch (cmd) {
 
     case COMMAND.CHARS:
-      if (process.argv.length < 4) {
-        display( msg.chars.arg );
-      } else {
-        api.getMovieCharacters( process.argv[3], finish );
-      }
+      cli.movieCharacters( args, finish );
       break;
 
     case COMMAND.MATCH:
-      if (process.argv.length < 4) {
-        display( msg.chars.args );
-      } else if (process.argv.length < 5) {
-        display( msg.chars.arg );
-    } else {
-      api.getMatchingCharacters( process.argv[3], process.argv[4], finish );
-      }
+      cli.matchingCharacters( args, finish );
       break;
 
     default:
       if (cmd.startsWith( COMMAND.TALL )) {
-        if (cmd.length > 5) {
-          api.getTallCharacters( cmd.substring(5), finish );
-        } else {
-          display( msg.tall.arg );
-        }
+        cli.tallCharacters( args, finish );
 
       } else {
-        display( msg.help );
+        console.log( msg.help );
+        finish();
       }
   }
 }
 
-app.get('/', (req, res) => res.send( msg.hello ) );
+app.get( '/', (req, res) => html.home( req, res ) );
+
+app.get( `/${ COMMAND.CHARS }/:title`, (req, res) => html.movieCharacters( req, res ) );
+
+app.get( `/${ COMMAND.MATCH }/:title1/:title2`, (req, res) => html.matchingCharacters( req, res ) );
+
+app.get( '*', (req, res) => {
+
+  if (req.originalUrl.startsWith( '/' + COMMAND.TALL )) {
+    html.tallCharacters( req, res );
+  } else {
+    html.show404( req, res );
+  }
+} );
